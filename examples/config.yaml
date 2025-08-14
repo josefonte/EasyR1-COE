@@ -66,7 +66,7 @@ worker:
     gpu_memory_utilization: 0.6
     enforce_eager: false
     enable_chunked_prefill: false
-    tensor_parallel_size: 2
+    tensor_parallel_size: 1
     disable_tqdm: false
     val_override_config:
       temperature: 0.6
@@ -92,7 +92,7 @@ trainer:
   experiment_name: qwen2_5_7b_math_grpo
   logger: ["console", "wandb"]
   nnodes: 1
-  n_gpus_per_node: 8
+  n_gpus_per_node: 4
   max_try_make_batch: 20  # -1 means no limit
   val_freq: 5  # -1 to disable
   val_before_train: true
@@ -104,3 +104,10 @@ trainer:
   save_checkpoint_path: null
   load_checkpoint_path: null
   find_last_checkpoint: true
+
+  # Metadata configuration (CoE features)
+  save_metadata: false
+  metadata_save_freq: 1 # -1 to disable, n means every x epochs
+  metadata_max_sequences: -1 # -1 means no limit, n means x rollouts
+  metadata_save_hidden_states: true
+  metadata_save_path: "generated_metadata"

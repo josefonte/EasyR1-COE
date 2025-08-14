@@ -603,6 +603,27 @@ class FSDPWorker(Worker):
         return output
 
     @register(dispatch_mode=Dispatch.DP_COMPUTE_PROTO)
+    def get_hidden_states(self):
+        """Retrieve pooled hidden states from the actor and wrap into DataProto.
+
+        Returns a DataProto with optional tensor key `hidden_states` of shape [B, L, D].
+        """
+        assert self._has_actor
+        try:
+            hidden_states = self.actor.get_hidden_states() if hasattr(self, "actor") else None
+            tensors = {"hidden_states": hidden_states} if hidden_states is not None else {}
+            output = DataProto.from_dict(tensors=tensors) if len(tensors) > 0 else DataProto()
+            if hasattr(self.actor, "last_hidden_states"):
+                del self.actor.last_hidden_states
+                self.actor.last_hidden_states = None
+            output = output.to("cpu")
+            return output
+        except Exception as e:
+            print(f"Error in get_hidden_states: {e}")
+            torch.cuda.empty_cache()
+            return DataProto()
+
+    @register(dispatch_mode=Dispatch.DP_COMPUTE_PROTO)
     def compute_ref_log_probs(self, data: DataProto):
         assert self._has_ref
 

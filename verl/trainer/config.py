@@ -146,6 +146,13 @@ class TrainerConfig:
     find_last_checkpoint: bool = True
     """automatically find the last checkpoint in the save checkpoint path to resume training"""
 
+    # Metadata configuration (CoE features)
+    save_metadata: bool = False
+    metadata_save_freq: int = -1  # -1 disables; n means save every n epochs
+    metadata_max_sequences: int = -1  # -1 no limit; n means x prompts (rollouts) per save
+    metadata_save_hidden_states: bool = False
+    metadata_save_path: str = "generated_metadata"
+
     def post_init(self):
         if self.save_checkpoint_path is None:
             self.save_checkpoint_path = os.path.join("checkpoints", self.project_name, self.experiment_name)
