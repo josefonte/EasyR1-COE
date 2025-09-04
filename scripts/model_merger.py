@@ -23,8 +23,8 @@ from torch.distributed._tensor import DTensor, Placement, Shard
 from transformers import (
     AutoConfig,
     AutoModelForCausalLM,
+    AutoModelForImageTextToText,
     AutoModelForTokenClassification,
-    AutoModelForVision2Seq,
     PretrainedConfig,
     PreTrainedModel,
 )
@@ -165,10 +165,10 @@ if __name__ == "__main__":
 
     if "ForTokenClassification" in architectures[0]:
         AutoClass = AutoModelForTokenClassification
+    elif "ForConditionalGeneration" in architectures[0]:
+        AutoClass = AutoModelForImageTextToText
     elif "ForCausalLM" in architectures[0]:
         AutoClass = AutoModelForCausalLM
-    elif "ForConditionalGeneration" in architectures[0]:
-        AutoClass = AutoModelForVision2Seq
     else:
         raise NotImplementedError(f"Unknown architecture {architectures}.")
 
